@@ -7,7 +7,9 @@ import com.plcoding.cryptotracker.core.domain.onError
 import com.plcoding.cryptotracker.core.domain.onSuccess
 import com.plcoding.cryptotracker.detail.domain.model.CoinPrice
 import com.plcoding.cryptotracker.detail.domain.usecase.GetPriceHistoryUseCase
+import com.plcoding.cryptotracker.detail.presentation.mapper.CoinPriceHistoryDomainToPresentationMapper
 import com.plcoding.cryptotracker.detail.presentation.model.CoinDetailAction
+import com.plcoding.cryptotracker.detail.presentation.model.CoinDetailPresentationState
 import com.plcoding.cryptotracker.overview.domain.model.Coin
 import com.plcoding.cryptotracker.overview.domain.model.CoinId
 import com.plcoding.cryptotracker.overview.domain.usecase.GetCoinsUseCase
@@ -29,6 +31,7 @@ class CoinListViewModel(
     private val getCoins: GetCoinsUseCase,
     private val getPriceHistory: GetPriceHistoryUseCase,
     private val coinDomainToPresentationMapper: CoinDomainToPresentationMapper,
+    private val coinPriceHistoryDomainToPresentationMapper: CoinPriceHistoryDomainToPresentationMapper,
 ) : ViewModel() {
     private val _state = MutableStateFlow(CoinListPresentationState())
     val state =
@@ -41,6 +44,14 @@ class CoinListViewModel(
                 started = SharingStarted.WhileSubscribed(TimeUnit.SECONDS.toMillis(5)),
                 initialValue = CoinListPresentationState(),
             )
+
+    private val _detailState = MutableStateFlow(CoinDetailPresentationState())
+    val detailState =
+        _detailState.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TimeUnit.SECONDS.toMillis(5)),
+            initialValue = CoinDetailPresentationState(),
+        )
 
     // private val _events = Channel<CoinListEvent>()
     // val events = _events.receiveAsFlow()
@@ -93,15 +104,23 @@ class CoinListViewModel(
 
     private fun selectCoin(coinId: CoinId) {
         val coin = _state.value.coins.find { it.id == coinId }
+        if (coin == null) return
+
         _state.update { it.copy(selectedCoin = coin) }
+        _detailState.update { it.copy(coinDetail = coin, isLoading = true) }
 
         viewModelScope.launch {
             getPriceHistory(coinId)
                 .onSuccess { list: List<CoinPrice> ->
-                    // TODO Show graph
+                    val mapped = list.map {
+                        coinPriceHistoryDomainToPresentationMapper.toPresentation(it)
+                    }.takeLast(6)
+                    _detailState.update {
+                        it.copy(isLoading = false, coinHistory = mapped)
+                    }
                 }.onError { error ->
                     _events.emit(CoinListEvent.Error(error))
-                    _state.update { it.copy(isLoading = false, isRefreshing = false) }
+                    _detailState.update { it.copy(isLoading = false) }
                     Log.e("CoinListViewModel", "Error loading price history $error")
                 }
         }

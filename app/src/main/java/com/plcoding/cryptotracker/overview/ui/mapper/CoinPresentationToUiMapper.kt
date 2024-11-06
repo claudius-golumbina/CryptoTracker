@@ -5,8 +5,12 @@ import android.icu.util.CurrencyAmount
 import com.plcoding.cryptotracker.core.ui.getDrawableIdForCoin
 import com.plcoding.cryptotracker.core.util.div
 import com.plcoding.cryptotracker.core.util.times
+import com.plcoding.cryptotracker.detail.presentation.model.CoinPricePresentationModel
+import com.plcoding.cryptotracker.graph.model.DataPoint
 import com.plcoding.cryptotracker.overview.presentation.model.CoinPresentationModel
 import com.plcoding.cryptotracker.overview.ui.model.CoinUiModel
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.absoluteValue
 
@@ -30,11 +34,20 @@ class CoinPresentationToUiMapper {
         )
     }
 
+    fun toUi(
+        presentation: CoinPricePresentationModel,
+        index: Int,
+    ): DataPoint =
+        DataPoint(
+            x = index.toFloat(),
+            y = presentation.price.number.toFloat(),
+            xLabel = presentation.time.format(),
+        )
+
     private fun CurrencyAmount.format(): String {
         val locale = Locale.getDefault()
         val numberFormat =
             NumberFormat.getCurrencyInstance(locale).apply {
-                currency = this.currency
                 minimumFractionDigits = 2
                 maximumFractionDigits = 2
             }
@@ -48,4 +61,6 @@ class CoinPresentationToUiMapper {
         numberFormat.maximumFractionDigits = 2
         return numberFormat.format(this)
     }
+
+    private fun ZonedDateTime.format(): String = DateTimeFormatter.ofPattern("ha\nM/d").format(this)
 }

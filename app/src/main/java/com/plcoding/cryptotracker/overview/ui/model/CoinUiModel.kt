@@ -13,4 +13,18 @@ data class CoinUiModel(
     val isNegativeChange: Boolean,
     val changeAmount: String,
     @DrawableRes val iconResId: Int
-)
+) {
+    companion object {
+        val EMPTY = CoinUiModel(
+            id = CoinId(""),
+            name = "",
+            symbol = "",
+            marketCap = "",
+            price = "",
+            changePercentage = "",
+            isNegativeChange = false,
+            changeAmount = "",
+            iconResId = -1,
+        )
+    }
+}

@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.plcoding.cryptotracker.core.ui.ObserveAsEvents
 import com.plcoding.cryptotracker.detail.ui.component.CoinDetailScreen
+import com.plcoding.cryptotracker.detail.ui.mapper.CoinDetailPresentationStateToUiMapper
 import com.plcoding.cryptotracker.overview.presentation.CoinListViewModel
 import com.plcoding.cryptotracker.overview.presentation.model.CoinListEvent
 import com.plcoding.cryptotracker.overview.ui.component.CoinListScreen
@@ -28,6 +29,7 @@ import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     private val mapper: CoinListStatePresentationToUiMapper by inject()
+    private val detailMapper: CoinDetailPresentationStateToUiMapper by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +39,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val viewModel = koinViewModel<CoinListViewModel>()
                     val state by viewModel.state.collectAsStateWithLifecycle()
+                    val detailState by viewModel.detailState.collectAsStateWithLifecycle()
                     val listState = rememberLazyListState()
 
                     val isDetail = state.selectedCoin != null
@@ -46,7 +49,7 @@ class MainActivity : ComponentActivity() {
                         exit = fadeOut(),
                     ) {
                         CoinDetailScreen(
-                            state = mapper.toUi(state),
+                            state = detailMapper.toUi(detailState),
                             modifier = Modifier.padding(innerPadding),
                             onAction = viewModel::onAction,
                         )

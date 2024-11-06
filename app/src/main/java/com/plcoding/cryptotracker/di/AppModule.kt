@@ -3,6 +3,8 @@ package com.plcoding.cryptotracker.di
 import com.plcoding.cryptotracker.core.data.network.HttpClientFactory
 import com.plcoding.cryptotracker.detail.data.web.mapper.CoinPriceWebToDomainMapper
 import com.plcoding.cryptotracker.detail.domain.usecase.GetPriceHistoryUseCase
+import com.plcoding.cryptotracker.detail.presentation.mapper.CoinPriceHistoryDomainToPresentationMapper
+import com.plcoding.cryptotracker.detail.ui.mapper.CoinDetailPresentationStateToUiMapper
 import com.plcoding.cryptotracker.overview.data.CoinRemoteRepository
 import com.plcoding.cryptotracker.overview.data.RemoteCoinDataSource
 import com.plcoding.cryptotracker.overview.data.web.CoinCapWebDataSource
@@ -25,7 +27,9 @@ val appModule =
         singleOf(::CoinWebToDomainMapper)
         singleOf(::CoinPriceWebToDomainMapper)
         singleOf(::CoinDomainToPresentationMapper)
+        singleOf(::CoinPriceHistoryDomainToPresentationMapper)
         singleOf(::CoinListStatePresentationToUiMapper)
+        singleOf(::CoinDetailPresentationStateToUiMapper)
         singleOf(::CoinPresentationToUiMapper)
 
         singleOf(::GetCoinsUseCase)
