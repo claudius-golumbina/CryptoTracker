@@ -12,6 +12,6 @@ class CoinPriceWebToDomainMapper {
     fun toDomain(entity: CoinPriceWebEntity) =
         CoinPrice(
             price = CurrencyAmount(entity.priceUsd.toDouble(), Currency.getInstance(Locale.US)),
-            time = Instant.ofEpochMilli(entity.time).atZone(ZoneId.of("UTC")),
+            time = Instant.ofEpochMilli(entity.time).atZone(ZoneId.systemDefault()),
         )
 }

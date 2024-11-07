@@ -21,12 +21,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -119,6 +121,17 @@ fun CoinDetailScreen(
             CircularProgressIndicator()
         } else {
             var selectedDataPoint by remember { mutableStateOf<DataPoint?>(null) }
+            var xLabelWidth by remember { mutableFloatStateOf(0f) }
+            var totalChartWidth by remember { mutableFloatStateOf(0f) }
+            val numberOfVisibleDataPoints =
+                if (xLabelWidth > 0f) {
+                    ((totalChartWidth - 2.5 * xLabelWidth) / xLabelWidth).toInt()
+                } else {
+                    0
+                }
+            val startIndex =
+                (state.coinHistory.lastIndex - numberOfVisibleDataPoints).coerceAtLeast(0)
+
             LineChart(
                 dataPoints = state.coinHistory,
                 currency = state.currency,
@@ -135,10 +148,15 @@ fun CoinDetailScreen(
                         horizontalPadding = 8.dp,
                         xLabelSpacing = 8.dp,
                     ),
-                visibleDataPointIndices = state.coinHistory.indices,
-                modifier = Modifier.fillMaxWidth().aspectRatio(16 / 10f),
+                visibleDataPointIndices = startIndex..state.coinHistory.lastIndex,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16 / 10f)
+                        .onSizeChanged { totalChartWidth = it.width.toFloat() },
                 selectedDataPoint = selectedDataPoint,
                 onSelectedDataPointChange = { selectedDataPoint = it },
+                onXLabelWidthChange = { xLabelWidth = it },
                 showHelperLines = true,
             )
         }

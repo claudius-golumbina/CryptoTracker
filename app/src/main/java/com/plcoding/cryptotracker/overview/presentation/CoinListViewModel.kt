@@ -112,9 +112,11 @@ class CoinListViewModel(
         viewModelScope.launch {
             getPriceHistory(coinId)
                 .onSuccess { list: List<CoinPrice> ->
-                    val mapped = list.map {
-                        coinPriceHistoryDomainToPresentationMapper.toPresentation(it)
-                    }.takeLast(6)
+                    val mapped =
+                        list
+                            .map {
+                                coinPriceHistoryDomainToPresentationMapper.toPresentation(it)
+                            }
                     _detailState.update {
                         it.copy(isLoading = false, coinHistory = mapped)
                     }

@@ -159,15 +159,6 @@ fun LineChart(
         val spaceBetweenLabels = remainingHeightForLabels / labelCountExclLast
 
         val viewPortBottomY = viewPortTopY + viewPortHeightPx
-        val viewPort =
-            Rect(
-                left = viewPortLeftX,
-                top = viewPortTopY,
-                right = viewPortRightX,
-                bottom = viewPortBottomY,
-            )
-
-        // drawRect(color = Color.Green, topLeft = viewPort.topLeft, size = viewPort.size)
 
         yLabelTextLayoutResults.forEachIndexed { index, textLayoutResult ->
             val yValue =
