@@ -2,6 +2,7 @@ package com.plcoding.cryptotracker.graph.model
 
 import android.icu.util.CurrencyAmount
 import java.text.NumberFormat
+import java.util.Currency
 import java.util.Locale
 
 data class PriceLabel(
@@ -10,6 +11,7 @@ data class PriceLabel(
     fun formatted(): String {
         val formatter =
             NumberFormat.getCurrencyInstance(Locale.getDefault()).apply {
+                currency = Currency.getInstance("USD")
                 val fractionDigits =
                     when {
                         price.number.toDouble() > 1000 -> 0

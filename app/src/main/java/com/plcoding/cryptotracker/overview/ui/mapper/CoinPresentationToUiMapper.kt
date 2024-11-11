@@ -1,6 +1,7 @@
 package com.plcoding.cryptotracker.overview.ui.mapper
 
 import android.icu.text.NumberFormat
+import android.icu.util.Currency
 import android.icu.util.CurrencyAmount
 import com.plcoding.cryptotracker.core.ui.getDrawableIdForCoin
 import com.plcoding.cryptotracker.core.util.div
@@ -48,6 +49,7 @@ class CoinPresentationToUiMapper {
         val locale = Locale.getDefault()
         val numberFormat =
             NumberFormat.getCurrencyInstance(locale).apply {
+                currency = Currency.getInstance("USD")
                 minimumFractionDigits = 2
                 maximumFractionDigits = 2
             }

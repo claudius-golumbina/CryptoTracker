@@ -52,9 +52,9 @@ fun CoinDetailScreen(
     modifier: Modifier = Modifier,
     onAction: (CoinDetailAction) -> Unit = {},
 ) {
-    BackHandler {
-        onAction(CoinDetailAction.Back)
-    }
+    //BackHandler {
+    //    onAction(CoinDetailAction.Back)
+    //}
 
     val coin = state.coinDetail
     Column(

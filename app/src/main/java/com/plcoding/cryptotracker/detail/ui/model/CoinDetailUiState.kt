@@ -8,6 +8,6 @@ import java.util.Locale
 data class CoinDetailUiState(
     val isLoading: Boolean = false,
     val coinDetail: CoinUiModel = CoinUiModel.EMPTY,
-    val currency: Currency = Currency.getInstance(Locale.getDefault()),
+    val currency: Currency = Currency.getInstance(Locale.US),
     val coinHistory: List<DataPoint> = emptyList()
 )
